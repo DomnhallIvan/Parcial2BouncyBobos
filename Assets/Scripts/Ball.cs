@@ -4,20 +4,37 @@ using UnityEngine;
 
 public class Ball : MonoBehaviour
 {
+    [Header("Referencias")]
     public Rigidbody rb;
-    private float maxInitialAngle = 0.67f;
-    private float moveSpeed = 20f;
+    private GameManager gameManager;
 
-    // Start is called before the first frame update
-    void Start()
+    [Header("Datos")]
+    private int porteriaLayer;
+
+    private void Awake()
     {
-        InitialPush();
+        porteriaLayer = LayerMask.NameToLayer("Porteria");
+        gameManager = FindObjectOfType<GameManager>();
     }
 
-    private void InitialPush()
+    private void OnCollisionEnter(Collision collision)
+    {       
+        if (collision.gameObject.layer==porteriaLayer)
+        {
+            ScoreZone scoreZone = collision.gameObject.GetComponent<ScoreZone>();
+            if (scoreZone)
+                gameManager.OnScoreZoneReached(scoreZone.id);
+
+            ReturnToPool();
+        }
+    }
+
+    private void ReturnToPool()
     {
-        Vector3 dir = Vector3.down;
-        dir.y=Random.Range(-maxInitialAngle, maxInitialAngle);
-        rb.velocity= dir*moveSpeed;
+        ObjectPool pool = FindObjectOfType<ObjectPool>();
+        if (pool != null)
+        {
+            pool.ReturnToPool(gameObject);
+        }
     }
 }

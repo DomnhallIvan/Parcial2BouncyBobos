@@ -12,15 +12,40 @@ public class Cannon : MonoBehaviour
     [Space]
     [SerializeField] private float FireRate = 5;
     [SerializeField] private float BulletForce = 40;
-
+    private float timeLastSpeedChange = 0f, minTimeSpeedChange = 3f;
+    private bool StartGame;
     private void Awake()
     {
         bulletPool = FindObjectOfType<ObjectPool>();
     }
 
+    private void LateUpdate()
+    {
+        if(StartGame)
+        {
+            timeLastSpeedChange += Time.deltaTime;
+            if (timeLastSpeedChange >= Random.Range(1f, 300f))
+            {
+                FIREBALL(_firePoint.position, _firePoint.forward);
+                timeLastSpeedChange = 0f;
+            }
+        }
+        
+    }
+
     void Start()
     {
-        FIREBALL(_firePoint.position, _firePoint.forward);         
+        GameManager.instance.gameUI.onStartGame += GameStart;
+    }
+
+    private void GameStart()
+    {
+        StartGame = true;
+    }
+
+    private void GameEnd()
+    {
+        StartGame=false;
     }
 
     private void FIREBALL(Vector3 firePointPosition, Vector3 fireDirection)

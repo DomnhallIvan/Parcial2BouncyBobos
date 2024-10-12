@@ -4,28 +4,92 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public int scorePlayer1,scorePlayer2,scorePlayer3,scorePlayer4; //Setear a 20 en el Inspector
-    public ScoreText scoreText1,scoreText2,scoreText3,scoreText4;
+    public static GameManager instance;
+
+    public GameUI gameUI;    
+    public Movement[] players;
+
+    public int loserScore = 0;
+    public System.Action onReset;
+
+    private void Awake()
+    {
+        if (instance)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            instance = this;
+            gameUI.onStartGame += OnStartGame;
+        }
+    }
+
+
     //Cada vez que un gol toque una portería con un ID similar al jugador se le resta un punto a ese jugador 
     public void OnScoreZoneReached(int id)
     {
         if (id == 1)
-            scorePlayer1--;
+            players[0].healthPoints--;
         if(id==2)
-            scorePlayer2--;
+            players[1].healthPoints--;
         if(id==3)
-            scorePlayer3--;
-        if(id==4)
-            scorePlayer4--;
+            players[2].healthPoints--;
+        if (id==4)
+            players[3].healthPoints--;
 
-        UpdateScores();
+        gameUI.UpdateScores(players[0].healthPoints, players[1].healthPoints, 
+            players[2].healthPoints, players[3].healthPoints);
+
+        //CheckWin();
+        CheckDied();
     }
 
-    private void UpdateScores()
+    private void CheckDied()
     {
-        scoreText1.SetScore(scorePlayer1);
-        scoreText2.SetScore(scorePlayer2);
-        scoreText3.SetScore(scorePlayer3);
-        scoreText4.SetScore(scorePlayer4);
+        if (players[0].healthPoints==0)
+        {
+            players[0].healthPoints+=0;
+            players[0].isDead = true;
+
+        }else if (players[1].healthPoints==0)
+        {
+            players[1].healthPoints += 0;
+            players[1].isDead = true;
+        }else if (players[2].healthPoints==0)
+        {
+            players[2].healthPoints += 0;
+            players[2].isDead = true;
+        }else if (players[3].healthPoints==0)
+        {
+            players[3].healthPoints += 0;
+            players[3].isDead = true;
+        }
     }
+
+    private void CheckWin()
+    {
+        int LoserId = players[0].healthPoints == loserScore ? 1 : players[1].healthPoints == loserScore ? 2 : players[2].healthPoints == loserScore?3: players[3].healthPoints == loserScore?4:0;
+
+        if(LoserId!=0)
+        {
+            //we have a loser!
+
+            //gameUI.OnGameEnds(LoserId);
+        }
+        else
+        {
+            onReset?.Invoke();
+        }
+    }
+
+    private void OnStartGame()
+    {
+        players[0].healthPoints = 20;
+        players[1].healthPoints = 20;
+        players[2].healthPoints = 20;
+        players[3].healthPoints = 20;
+        gameUI.UpdateScores(players[0].healthPoints, players[1].healthPoints, players[2].healthPoints, players[3].healthPoints);
+    }
+
 }

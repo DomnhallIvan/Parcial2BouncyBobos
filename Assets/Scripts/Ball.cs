@@ -6,7 +6,7 @@ public class Ball : MonoBehaviour
 {
     [Header("Referencias")]
     public Rigidbody rb;
-    private GameManager gameManager;
+    //private GameManager gameManager;
 
     [Header("Datos")]
     private int porteriaLayer;
@@ -14,7 +14,7 @@ public class Ball : MonoBehaviour
     private void Awake()
     {
         porteriaLayer = LayerMask.NameToLayer("Porteria");
-        gameManager = FindObjectOfType<GameManager>();
+        //gameManager = FindObjectOfType<GameManager>();
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -23,7 +23,7 @@ public class Ball : MonoBehaviour
         {
             ScoreZone scoreZone = collision.gameObject.GetComponent<ScoreZone>();
             if (scoreZone)
-                gameManager.OnScoreZoneReached(scoreZone.id);
+                GameManager.instance.OnScoreZoneReached(scoreZone.id);
 
             ReturnToPool();
         }

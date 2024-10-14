@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/BOUNCYBOBOS.unity
+    guid: e17f1bbddb7437b4ba57e43c1690653e
   m_configObjects: {}

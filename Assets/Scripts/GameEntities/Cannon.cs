@@ -25,7 +25,7 @@ public class Cannon : MonoBehaviour
         if(StartGame)
         {
             timeLastSpeedChange += Time.deltaTime;
-            if (timeLastSpeedChange >= Random.Range(1f, 300f))
+            if (timeLastSpeedChange >= Random.Range(1f, 750f))
             {
                 FIREBALL(_firePoint.position, _firePoint.forward);
                 timeLastSpeedChange = 0f;

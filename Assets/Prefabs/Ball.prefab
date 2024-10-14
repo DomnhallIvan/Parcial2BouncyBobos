@@ -148,6 +148,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 6825284059476746637}
+  NumOfBounces: 20
 --- !u!1001 &4708904470201286187
 PrefabInstance:
   m_ObjectHideFlags: 0

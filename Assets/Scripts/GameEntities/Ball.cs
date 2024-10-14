@@ -10,16 +10,28 @@ public class Ball : MonoBehaviour
 
     [Header("Datos")]
     private int porteriaLayer;
+    private int playerLayer;
+    private int bolaLayer;
+    private Vector3 lastVelocity;
+    [SerializeField] private int NumOfBounces = 20;
+    private int curBounces = 0;
 
     private void Awake()
     {
         porteriaLayer = LayerMask.NameToLayer("Porteria");
+        playerLayer = LayerMask.NameToLayer("Player");
+        bolaLayer = LayerMask.NameToLayer("BolaLoca");
         //gameManager = FindObjectOfType<GameManager>();
     }
 
     private void Start()
     {
         GameManager.instance.onReset += ReturnToPool;
+    }
+
+    private void LateUpdate()
+    {
+        lastVelocity = rb.velocity;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -32,6 +44,13 @@ public class Ball : MonoBehaviour
 
             ReturnToPool();
         }
+        if(collision.gameObject.layer==playerLayer|| collision.gameObject.layer == bolaLayer)
+        {            
+           
+            curBounces++;
+            if (curBounces <= NumOfBounces) return;
+            ReturnToPool();
+        }
     }
 
     private void ReturnToPool()
@@ -39,6 +58,7 @@ public class Ball : MonoBehaviour
         ObjectPool pool = FindObjectOfType<ObjectPool>();
         if (pool != null)
         {
+            curBounces = 0;
             pool.ReturnToPool(gameObject);
         }
     }

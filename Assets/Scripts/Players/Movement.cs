@@ -2,7 +2,7 @@ using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Windows.Speech;
+//using UnityEngine.Windows.Speech;
 
 public class Movement : Stats
 {
@@ -17,7 +17,7 @@ public class Movement : Stats
     private float timeLastSpeedChange = 0f, minTimeSpeedChange = 1f;
 
     private float moveSpeedMultiplier = 1f;
-    private int direction = 0;
+    private float direction = 0;
     private Vector3 startPosition;
     //private Vector3 ballPos;
 
@@ -36,6 +36,7 @@ public class Movement : Stats
 
     private void GameEnd()
     {
+        direction = 0;
         transform.position=startPosition;
         PlayerBarrier.SetActive(false);
         healthPoints = 20;
@@ -100,20 +101,36 @@ public class Movement : Stats
                         direction = ballPos.x > transform.position.x ? 1 : -1;
                     }
 
-                    if (timeLastSpeedChange >= minTimeSpeedChange) //Tiene una chance de 1 entre 100 chances en cada frame en cambiar de velocidad
+                    if (timeLastSpeedChange >= minTimeSpeedChange && Random.value < 0.1f) //Tiene chance cada 3 seg de cambiar velocidad
                     {
-                        float probability = Mathf.Clamp01(1f - distanceToBall / _radius);
-                        if (Random.value < probability)
-                        {
-                            moveSpeedMultiplier = Random.Range(0.15f, 1.5f);
-                            timeLastSpeedChange = 0f;
-                        }
-
+                            moveSpeedMultiplier = Random.Range(0.50f, 1.5f);
+                            timeLastSpeedChange = 0f;                        
                     }
                     MovimientoSexy(direction);
                     //transform.position = new Vector3(ballPos.x, 1, startPosition.z);
                 }
 
+            }
+            else //Si no tiene ninguna pelota en la vista, entonces regresa en al punto medio de su porteria
+            {
+                if(isLeft)
+                {
+                    
+                    if (Mathf.Abs(startPosition.z - transform.position.z) > aiDeadzone)
+                    {
+                        direction = startPosition.z > transform.position.z ? 1 : -1;
+                    }
+                    MovimientoSexyL(direction);
+                }
+                if(!isLeft)
+                {
+                    
+                    if (Mathf.Abs(startPosition.x - transform.position.x) > aiDeadzone)
+                    {
+                        direction = startPosition.x > transform.position.x ? 1 : -1;
+                    }
+                    MovimientoSexy(direction);
+                }
             }
         }
     }
